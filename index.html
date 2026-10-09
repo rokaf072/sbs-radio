@@ -352,6 +352,7 @@
       line-height: 1.35;
     }
     .guest-input:focus { outline: none; border-color: #90a4ae; background: #fffde7; }
+    tr.is-rec .guest-input { font-weight: 400; color: #9ca3af; font-style: italic; }
     .guest-input::placeholder { font-weight: 400; color: #c3c9d3; }
 
     .guest-print-text {
@@ -401,7 +402,78 @@
     .print-footer { display: none; }
 
     .btn-staff { background: #e1bee7; color: #4a148c; }
+    .btn-week  { background: #ffffff; color: #4a148c; }
     .btn-staff-sync { background: #ce93d8; color: #4a148c; }
+
+
+    /* ===== 여러 날 한눈에 보기 ===== */
+    .modal-overlay.week-overlay { padding: 12px; }
+    .modal.week-modal { width: min(1900px, 100%); height: 94vh; max-height: 94vh; }
+    .week-tools { gap: 6px; }
+    .week-tools input[type="date"] {
+      font-family: inherit; font-size: 14px; font-weight: 700;
+      padding: 6px 8px; border: 1px solid #cfc6dc; border-radius: 5px; color: #1b263b;
+    }
+    .wk-nav { padding: 7px 10px; }
+    .seg { display: inline-flex; border: 1px solid #cfc6dc; border-radius: 6px; overflow: hidden; margin-left: 6px; }
+    .seg button {
+      font-family: inherit; font-size: 13px; font-weight: 700; padding: 7px 11px;
+      border: none; border-right: 1px solid #e4dcee; background: #ffffff; color: #4a148c; cursor: pointer;
+    }
+    .seg button:last-child { border-right: none; }
+    .seg button.on { background: #4a148c; color: #ffffff; }
+    .seg-ch button.power.on { background: #1976d2; }
+    .seg-ch button.love.on  { background: #e91e63; }
+    .wk-status { font-size: 13px; font-weight: 700; color: #7a6f8a; }
+    .modal-body.week-body { background: #eef1f6; padding: 12px; }
+    .week-grid {
+      display: grid;
+      grid-template-columns: repeat(var(--wk-n, 7), minmax(205px, 1fr));
+      gap: 10px;
+      align-items: start;
+    }
+    .wk-col {
+      background: #ffffff;
+      border-radius: 8px;
+      border-top: 5px solid var(--wk-main, #1976d2);
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+      overflow: hidden;
+    }
+    .wk-col.power { --wk-main: #1976d2; --wk-dark: #0d47a1; --wk-soft: #f3f8ff; }
+    .wk-col.love  { --wk-main: #e91e63; --wk-dark: #ad1457; --wk-soft: #fff5f9; }
+    .wk-head {
+      width: 100%; display: flex; align-items: baseline; justify-content: center; gap: 6px;
+      font-family: inherit; font-size: 16px; font-weight: 900; color: #1a2233;
+      padding: 10px 8px; border: none; border-bottom: 1px solid #e6e9ef;
+      background: var(--wk-soft); cursor: pointer;
+    }
+    .wk-head:hover { background: #fff8e1; }
+    .wk-head .dow { font-size: 14px; }
+    .wk-head.sat .dow, .wk-head.sat .md { color: #1565c0; }
+    .wk-head.sun .dow, .wk-head.sun .md { color: #c62828; }
+    .wk-head .today { font-size: 11px; font-weight: 800; color: #ffffff; background: #fca311; border-radius: 9px; padding: 1px 7px; }
+    .wk-head .sel { font-size: 11px; font-weight: 800; color: #ffffff; background: #4a148c; border-radius: 9px; padding: 1px 7px; }
+    .wk-row {
+      display: grid; grid-template-columns: 44px 1fr; gap: 6px;
+      padding: 6px 9px; border-top: 1px solid #eef1f5; font-size: 13px; line-height: 1.35;
+    }
+    .wk-row:first-child { border-top: none; }
+    .wk-time { font-weight: 800; color: var(--wk-dark); }
+    .wk-title { font-weight: 800; color: #1a2233; }
+    .wk-tags { display: inline-flex; gap: 3px; vertical-align: 1px; margin-right: 4px; }
+    .wk-bora, .wk-live { font-size: 10.5px; font-weight: 800; border-radius: 3px; padding: 1px 4px; line-height: 1.3; }
+    .wk-bora { background: #f15a22; color: #ffffff; }
+    .wk-live { background: #ffeb3b; color: #c62828; border: 1px solid #f9a825; }
+    .wk-guest { margin-top: 2px; font-weight: 800; color: #000000; word-break: keep-all; }
+    .wk-row.rec .wk-guest { font-weight: 400; color: #9ca3af; font-style: italic; }
+    .wk-empty, .wk-loading, .wk-error { padding: 18px 10px; text-align: center; font-size: 13px; color: #8a93a3; }
+    .wk-error { color: #c62828; }
+    @media screen and (max-width: 860px) {
+      .modal-overlay.week-overlay { padding: 0; }
+      .modal.week-modal { height: 100vh; max-height: 100vh; border-radius: 0; }
+      .week-grid { grid-template-columns: repeat(var(--wk-n, 7), minmax(210px, 82vw)); }
+      .modal-body.week-body { padding: 8px; }
+    }
 
     /* ===== 스태프 관리 창 ===== */
     [hidden] { display: none !important; }
@@ -573,13 +645,13 @@
     body.printing .modal-overlay { display: none !important; }
 
     /* =========================================================
-     * 인쇄 최적화 — A4 가로 1장 고정
-     * 용지 297×210mm, 여백 5/6mm → 인쇄영역 285×199mm
+     * 인쇄 최적화 — A4 세로 1장 고정
+     * 용지 210×297mm, 여백 5/6mm → 인쇄영역 198×286mm (파워FM 위 · 러브FM 아래)
      * body.printing 레이아웃을 인쇄 직전에 화면에서 실제 배치 후
      * script.js가 넘치지 않을 때까지 글자 크기(--pscale)를 자동 조절
      * ========================================================= */
     @page {
-      size: A4 landscape;
+      size: A4 portrait;
       margin: 5mm 6mm;
     }
 
@@ -597,8 +669,8 @@
 
     body.printing .page {
       max-width: none;
-      width: 285mm;
-      height: 199mm;
+      width: 198mm;
+      height: 286mm;
       margin: 0;
       padding: 0;
       display: flex;
@@ -622,10 +694,10 @@
     }
 
     /* 관리 열이 빠진 만큼 나머지 열 비율 재조정 */
-    body.printing col.col-time  { width: 10%; }
-    body.printing col.col-prog  { width: 44%; }
-    body.printing col.col-type  { width: 12%; }
-    body.printing col.col-guest { width: 34%; }
+    body.printing .col-time  { width: 9%; }
+    body.printing .col-prog  { width: 45%; }
+    body.printing .col-type  { width: 11%; }
+    body.printing .col-guest { width: 35%; }
     body.printing col.col-manage { width: 0; }
 
     body.printing .title-icon { height: 8mm; border-radius: 3px; }
@@ -646,12 +718,15 @@
       flex: 1 1 auto;
       min-height: 0;
       margin-top: 2.5mm;
-      gap: 3mm;
+      gap: 2.5mm;
+      flex-direction: column;
       align-items: stretch;
       transform-origin: top center;
     }
 
     body.printing .channel-box {
+      width: 100%;
+      min-height: 0;
       box-shadow: none;
       border-radius: 4px;
       border-width: 1.2pt;
@@ -672,9 +747,10 @@
     }
 
     body.printing table.schedule th {
-      height: 6.5mm;
+      height: 7mm;
       padding: 0 2px;
-      font-size: calc(8.5pt * var(--pscale, 1));
+      font-size: calc(10.5pt * var(--pscale, 1)); /* 메뉴(머리글) 글씨 크게 */
+      font-weight: 900;
       border-color: var(--ch-line);
       border-bottom: 1.2pt solid var(--ch-main);
     }
@@ -705,6 +781,16 @@
     }
 
     body.printing .prog-line { gap: 1.5mm; }
+    /* 인쇄: 프로그램명 바로 옆에 PD·작가를 붙여 한 줄로 */
+    body.printing .prog-cell {
+      display: flex;
+      align-items: center; /* PD·작가를 칸 높이의 가운데에 */
+      gap: 2mm;
+      min-width: 0;
+    }
+    body.printing .prog-cell .prog-line { flex: 0 0 auto; align-self: center; }
+    body.printing .prog-cell .prog-title { white-space: nowrap; }
+    body.printing .prog-cell .prog-staff { flex: 1 1 auto; min-width: 0; margin-top: 0 !important; align-self: center; line-height: 1.2; position: relative; top: 0.35mm; } /* 작은 글씨가 위로 떠 보이지 않게 살짝 내림 */
 
     body.printing .prog-title {
       font-size: calc(10pt * var(--pscale, 1));
@@ -770,6 +856,7 @@
       color: #000000;
       letter-spacing: -0.2px;
     }
+    body.printing tr.is-rec .guest-print-text { font-weight: 400; color: #9ca3af; font-style: italic; } /* 녹음 출연자: 옅은 회색 + 기울임 (흑백 인쇄에서도 구분) */
 
     body.printing .print-footer {
       flex: 0 0 auto;
@@ -793,10 +880,90 @@
     body.printing .print-footer .lg.live { background: #ffeb3b; color: #c62828; border: 0.6pt solid #f9a825; border-radius: 2px; }
 
     /* 생방 — 흑백 인쇄: 진한 바탕 + 흰 글씨 (회색조에서도 확실히 구분) */
-    body.printing.print-mono .type-print.live { background: #c62828; color: #ffffff; border-color: #7f0000; }
-    body.printing.print-mono .print-footer .lg.live { background: #c62828; color: #ffffff; border-color: #7f0000; }
     body.printing .print-footer .lg.rec  { background: #e1f5fe; color: #0277bd; border: 0.6pt solid #81d4fa; }
     body.printing .print-footer .lg.bora { background: #f15a22; color: #ffffff; border-radius: 2px; }
+    /* =========================================================
+     * 흑백 인쇄 전용 디자인 (🖨️ 흑백 인쇄 버튼에만 적용)
+     * - 배경색·그라데이션·줄무늬 모두 제거 → 흰 바탕 + 검정 글씨
+     * - 선은 가는 가로줄 위주, 세로줄은 시간 칸 옆 하나만
+     * - 진한 덩어리는 '생방송' 하나만, 보라는 테두리 글씨
+     * ========================================================= */
+    body.printing.print-mono .title-icon { display: none; }
+    /* 여백을 넉넉히 → 답답하지 않게 (컬러·흑백 공통) */
+    body.printing .page { padding: 3mm 9mm 2mm; }
+    body.printing table.schedule td { padding-left: 2mm; padding-right: 2mm; }
+    body.printing .tables { margin-top: 5mm; gap: 7mm; }
+    body.printing .channel-header { font-size: 13pt; }
+    /* 생방송 표시: 출연자보다 작게 (컬러는 노랑 바탕 그대로) */
+    body.printing .type-print.live {
+      font-size: calc(9pt * var(--pscale, 1));
+      letter-spacing: 0;
+      padding: 0.5mm 1.6mm;
+      border-width: 0.8pt;
+    }
+    body.printing.print-mono .title-bar {
+      background: none !important;
+      color: #000000;
+      border: none;
+      border-bottom: 2pt solid #000000;
+      border-radius: 0;
+      box-shadow: none;
+      font-size: 17pt;
+    }
+    body.printing.print-mono .channel-box {
+      border: none;
+      border-radius: 0;
+      box-shadow: none;
+      background: #ffffff;
+    }
+    body.printing.print-mono .channel-header {
+      background: none !important;
+      color: #000000;
+      height: 7mm;
+      font-size: 13pt;
+      font-weight: 900;
+      justify-content: flex-start;
+      padding: 0 1mm;
+      border-bottom: 1.4pt solid #000000;
+    }
+    body.printing.print-mono table.schedule th {
+      background: none !important;
+      color: #000000;
+      border: none;
+      border-bottom: 0.9pt solid #000000;
+    }
+    body.printing.print-mono table.schedule td {
+      background: none !important;
+      border: none;
+      border-bottom: 0.4pt solid #9e9e9e;
+    }
+    body.printing.print-mono table.schedule tbody tr.sched-row:nth-child(even) td { background: none !important; }
+    body.printing.print-mono td.col-time { border-right: 0.6pt solid #000000 !important; }
+    body.printing.print-mono .time-input { color: #000000; }
+    body.printing.print-mono .prog-title { color: #000000; }
+    body.printing.print-mono .prog-staff { color: #444444; }
+    body.printing.print-mono .bora-badge {
+      background: #ffffff !important;
+      color: #000000 !important;
+      border: 0.7pt solid #000000 !important;
+      font-weight: 800;
+    }
+    /* 생방송: 테두리 상자 + 굵은 검정 글씨, 출연자보다 작게 (출연자가 주인공) */
+    body.printing.print-mono .type-print.live {
+      background: #ffffff;
+      color: #000000;
+      border: 0.8pt solid #000000;
+      border-radius: 2px;
+      font-size: calc(9pt * var(--pscale, 1));
+      font-weight: 800;
+      letter-spacing: 0;
+      padding: 0.5mm 1.6mm;
+    }
+    body.printing.print-mono .guest-print-text { color: #000000; }
+    body.printing.print-mono tr.is-rec .guest-print-text { color: #6e6e6e; }
+    body.printing.print-mono .print-footer { color: #000000; }
+    body.printing.print-mono .print-footer .lg.bora { background: #ffffff; color: #000000; border: 0.6pt solid #000000; }
+    body.printing.print-mono .print-footer .lg.live { background: #ffffff; color: #000000; border: 0.6pt solid #000000; }
 
     /* =========================================================
      * 휴대폰·태블릿 화면 (웹 버전)
@@ -880,10 +1047,11 @@
         <input type="date" id="dateInput" tabindex="-1" aria-label="날짜 선택">
       </span>
       <button type="button" class="btn btn-crawl" id="btnCrawl">🔄 SBS 해당날짜 편성표 가져오기</button>
+      <button type="button" class="btn btn-week" id="btnWeek" title="1~7일치 편성을 한 화면에 나란히 보기">🗓️ 여러 날 한눈에 보기</button>
       <button type="button" class="btn btn-staff" id="btnStaff">👥 스태프 수동으로 관리</button>
       <button type="button" class="btn btn-staff-sync" id="btnStaffSync" title="화면의 프로그램별 CP·PD·작가를 SBS 데이터에서 읽어 명단을 자동으로 갱신">🔁 스태프 자동갱신</button>
-      <button type="button" class="btn btn-print" id="btnPrintColor" title="컬러 프린터용 (LIVE = 노랑)">🖨️ 컬러 인쇄</button>
-      <button type="button" class="btn btn-print-mono" id="btnPrintMono" title="흑백 프린터용 (LIVE = 진한 바탕 흰 글씨)">🖨️ 흑백 인쇄</button>
+      <button type="button" class="btn btn-print" id="btnPrintColor" title="컬러 프린터용 (생방송 = 노랑)">🖨️ 컬러 인쇄</button>
+      <button type="button" class="btn btn-print-mono" id="btnPrintMono" title="흑백 프린터 전용 깔끔한 디자인 (생방송 = 테두리 상자)">🖨️ 흑백 인쇄</button>
       <span class="status" id="status"></span>
     </div>
 
@@ -947,8 +1115,43 @@
 
     <div class="print-footer">
       <div class="legend">
-        <span class="lg live">LIVE</span>생방송
         <span class="lg bora">보라</span>보이는 라디오
+        <span class="lg live">생방송</span>빈칸은 녹음
+      </div>
+    </div>
+
+    <!-- 여러 날 한눈에 보기 -->
+    <div class="modal-overlay week-overlay" id="weekModal" hidden>
+      <div class="modal week-modal" role="dialog" aria-labelledby="weekTitle">
+        <div class="modal-head">
+          <span id="weekTitle">🗓️ 여러 날 한눈에 보기</span>
+          <button type="button" class="modal-x" id="weekClose" title="닫기">✕</button>
+        </div>
+        <div class="modal-tools week-tools">
+          <button type="button" class="mbtn wk-nav" id="weekPrev" title="이전 기간">◀</button>
+          <input type="date" id="weekStart" aria-label="시작일">
+          <button type="button" class="mbtn wk-nav" id="weekNext" title="다음 기간">▶</button>
+          <button type="button" class="mbtn" id="weekToday">오늘부터</button>
+          <div class="seg" id="weekDays">
+            <button type="button" data-days="1">1일</button>
+            <button type="button" data-days="2">2일</button>
+            <button type="button" data-days="3">3일</button>
+            <button type="button" data-days="4">4일</button>
+            <button type="button" data-days="5">5일</button>
+            <button type="button" data-days="6">6일</button>
+            <button type="button" data-days="7">7일</button>
+          </div>
+          <div class="seg seg-ch" id="weekCh">
+            <button type="button" data-ch="power" class="power">파워FM</button>
+            <button type="button" data-ch="love" class="love">러브FM</button>
+          </div>
+          <span class="spacer"></span>
+          <span class="wk-status" id="weekStatus"></span>
+        </div>
+        <div class="modal-hint">날짜 머리를 누르면 그날 편성표가 아래 편집 화면에 열려요 (편집·인쇄는 그 화면에서)</div>
+        <div class="modal-body week-body">
+          <div class="week-grid" id="weekGrid"></div>
+        </div>
       </div>
     </div>
 
@@ -1587,10 +1790,13 @@ function applyTypeClass(select) {
   // 인쇄 전용 구분 뱃지 동기화
   const span = select.parentElement ? select.parentElement.querySelector('.type-print') : null;
   if (span) {
-    span.textContent = select.value === '생방' ? 'LIVE' : select.value;
+    span.textContent = select.value === '생방' ? '생방송' : select.value;
     span.classList.remove('live', 'rec');
     span.classList.add(cls);
   }
+  // 녹음 행은 출연자를 회색·보통 굵기·약간 작게 (생방송 행만 검정 굵게)
+  const tr = select.closest('tr');
+  if (tr) tr.classList.toggle('is-rec', cls === 'rec');
 }
 
 function autoResize(textarea) {
@@ -1635,8 +1841,12 @@ function createRow(data) {
   staff.setAttribute('contenteditable', 'plaintext-only');
   staff.setAttribute('spellcheck', 'false');
   staff.textContent = d.staff;
-  tdProg.appendChild(line);
-  tdProg.appendChild(staff);
+  // 프로그램명 줄 + 스태프 줄을 한 묶음으로 (화면: 위아래 / 인쇄: 한 줄로 나란히)
+  const cell = document.createElement('div');
+  cell.className = 'prog-cell';
+  cell.appendChild(line);
+  cell.appendChild(staff);
+  tdProg.appendChild(cell);
 
   // 구분
   const tdType = document.createElement('td');
@@ -1646,7 +1856,7 @@ function createRow(data) {
   ['생방', '녹음'].forEach((v) => {
     const opt = document.createElement('option');
     opt.value = v;
-    opt.textContent = v === '생방' ? 'LIVE' : v; // 화면 표시는 LIVE, 내부 값은 '생방' 유지
+    opt.textContent = v === '생방' ? '생방송' : v; // 화면 표시는 생방송, 내부 값은 '생방' 유지
     select.appendChild(opt);
   });
   select.value = d.type === '생방' ? '생방' : '녹음';
@@ -1694,6 +1904,7 @@ function createRow(data) {
   tr.appendChild(tdType);
   tr.appendChild(tdGuest);
   tr.appendChild(tdManage);
+  applyTypeClass(select);
 
   requestAnimationFrame(() => autoResize(ta));
   return tr;
@@ -1821,28 +2032,34 @@ function fitGuestWidths() {
   document.querySelectorAll('tr.sched-row .guest-print-text').forEach((div) => {
     div.classList.remove('gp-wrap');
     div.style.fontSize = '';
-    let f = 1;
+    const tr = div.closest('tr');
+    const base = tr && tr.classList.contains('is-rec') ? 0.9 : 1; // 녹음 출연자는 90% 크기
+    let f = base;
+    if (base !== 1) div.style.fontSize = 'calc(10.5pt * var(--pscale, 1) * ' + base + ')';
     while (div.scrollWidth > div.clientWidth + 1 && f > 0.75) {
       f -= 0.05;
       div.style.fontSize = 'calc(10.5pt * var(--pscale, 1) * ' + f.toFixed(2) + ')';
     }
     if (div.scrollWidth > div.clientWidth + 1) {
       div.classList.add('gp-wrap');
-      div.style.fontSize = 'calc(10.5pt * var(--pscale, 1) * 0.9)';
+      div.style.fontSize = 'calc(10.5pt * var(--pscale, 1) * ' + (base * 0.9).toFixed(2) + ')';
     }
   });
 }
 
-/* ---------- 인쇄 레이아웃: A4 가로 1장 자동 맞춤 ----------
- * 1) body.printing 클래스로 실제 인쇄 크기(285×199mm) 레이아웃을 화면에 적용
+/* ---------- 인쇄 레이아웃: A4 세로 1장 자동 맞춤 ----------
+ * 1) body.printing 클래스로 실제 인쇄 크기(198×286mm, 두 채널 위아래) 레이아웃을 화면에 적용
  * 2) 채널별 남은 높이를 행 수로 나눠 행 높이 지정 → 적은 날도 용지 아래까지 꽉 채움
  * 3) 글자 배율(--pscale)을 1.3배부터 내려가며 넘치지 않는 최대값을 찾음
  *    → 프로그램이 적은 날은 글씨가 커지고, 많은 날은 작아짐
  * 4) 최소 배율(0.45)에서도 넘치면 표 자체를 비율 축소(zoom)해서라도 1장에 맞춤
  * 5) 인쇄 종료(afterprint) 후 화면 레이아웃 원복 */
 const PSCALE_MAX = 1.3;
+const OVERFLOW_LIMIT = 1.004; // 소수점 오차(1px 미만)는 넘침으로 보지 않음
+const PSCALE_MAX_MONO = 1.0;
 const PSCALE_MIN = 0.45;
 const PSCALE_STEP = 0.05;
+const PSTAFF_MIN = 0.85;
 
 function setPrintScale(scale) {
   document.body.style.setProperty('--pscale', scale.toFixed(3));
@@ -1854,9 +2071,27 @@ function layoutRowsForPrint() {
     const table = tbody.closest('table');
     const wrap = tbody.closest('.table-wrap');
     const thead = table.querySelector('thead');
-    const n = Math.max(1, tbody.querySelectorAll('tr.sched-row').length);
+    const rows = Array.from(tbody.querySelectorAll('tr.sched-row'));
+    const n = Math.max(1, rows.length);
     const avail = wrap.clientHeight - thead.offsetHeight - 1;
-    tbody.style.setProperty('--row-h', Math.max(8, Math.floor(avail / n)) + 'px');
+    // 각 행의 실제 필요한 높이를 재고, 남는 공간을 모든 행에 똑같이 나눠 줌
+    // (출연자가 두 줄인 행 하나 때문에 페이지 전체 글씨가 작아지지 않게)
+    tbody.style.setProperty('--row-h', '0px');
+    rows.forEach((r) => { r.style.height = ''; });
+    const nat = rows.map((r) => r.offsetHeight);
+    // 보통 행은 모두 같은 높이 h, h보다 원래 큰 행(출연자 두 줄 등)만 그 높이 유지
+    // sum(max(nat_i, h)) = avail 이 되는 h를 찾음
+    const sorted = nat.slice().sort((a, b) => b - a);
+    let h = avail / n;
+    let fixedSum = 0;
+    for (let k = 0; k < sorted.length; k++) {
+      const rest = n - k;
+      h = (avail - fixedSum) / rest;
+      if (sorted[k] <= h) break;
+      fixedSum += sorted[k];
+    }
+    h -= 0.2; // 테두리·반올림 오차 여유
+    rows.forEach((r, i) => { r.style.height = Math.max(nat[i], h).toFixed(2) + 'px'; });
   });
 }
 
@@ -1885,22 +2120,32 @@ function preparePrint(mode) {
 
   document.body.classList.add('printing');
   CHANNELS.forEach((ch) => { $('#tbody-' + ch).closest('table').style.zoom = ''; });
+  // A4 세로: 채널 표를 위아래로 쌓고, 행 수(+머리글 몫 2.2행)에 비례해 높이를 나눔
+  CHANNELS.forEach((ch) => {
+    const tbody = $('#tbody-' + ch);
+    const n = Math.max(1, tbody.querySelectorAll('tr.sched-row').length);
+    tbody.closest('.channel-box').style.flex = (n + 2.2).toFixed(1) + ' 1 0';
+  });
 
-  let scale = PSCALE_MAX;
+  // 글씨를 꽉 키우지 않고 여백을 남겨 숨통이 트이게 (컬러·흑백 모두 최대 1.0배)
+  let scale = PSCALE_MAX_MONO;
   setPrintScale(scale);
   fitGuestWidths();
   fitStaffWidths();
   layoutRowsForPrint();
-  while (overflowRatio() > 1.0 && scale > PSCALE_MIN) {
+  // 세로로 넘치거나, PD·작가 줄이 한 줄에 안 들어가면(두 줄 접힘) 글자 배율을 낮춤
+  // (스태프 때문에는 0.85배까지만 낮춤 — 한 프로그램 때문에 전체가 너무 작아지지 않게)
+  const staffSqueezed = () => document.querySelector('tr.sched-row .prog-staff.st-wrap') !== null;
+  while ((overflowRatio() > OVERFLOW_LIMIT || (staffSqueezed() && scale > PSTAFF_MIN)) && scale > PSCALE_MIN) {
     scale = Math.max(PSCALE_MIN, scale - PSCALE_STEP);
     setPrintScale(scale);
-    fitGuestWidths();
+      fitGuestWidths();
     fitStaffWidths();
     layoutRowsForPrint();
   }
 
   // 최후 수단: 그래도 넘치면 넘치는 표를 비율 축소
-  if (overflowRatio() > 1.0) {
+  if (overflowRatio() > OVERFLOW_LIMIT) {
     CHANNELS.forEach((ch) => {
       const tbody = $('#tbody-' + ch);
       const table = tbody.closest('table');
@@ -1914,7 +2159,11 @@ function preparePrint(mode) {
 function cleanupPrint() {
   document.body.classList.remove('printing', 'print-mono');
   document.querySelectorAll('tr.sched-row .prog-staff').forEach(resetStaffFit); // 화면 글자 크기 원래대로
-  CHANNELS.forEach((ch) => { $('#tbody-' + ch).closest('table').style.zoom = ''; });
+  CHANNELS.forEach((ch) => {
+    $('#tbody-' + ch).closest('table').style.zoom = '';
+    $('#tbody-' + ch).closest('.channel-box').style.flex = '';
+  });
+  document.querySelectorAll('tr.sched-row').forEach((r) => { r.style.height = ''; });
 }
 
 /* =========================================================
@@ -2639,24 +2888,294 @@ function autoMaximizeWindow() {
   }
 }
 
+
+/* =========================================================
+ * 🗓️ 여러 날 한눈에 보기
+ * - 시작일부터 1~7일치를 채널별로 나란히 표시 (보기 전용)
+ * - 날짜 머리를 누르면 그날 편성표를 편집 화면에 열기 (편집·인쇄는 하루씩)
+ * - 한 번 받은 날은 기억해 두었다가 다시 쓰기 (채널 전환·기간 변경 시 빠름)
+ * ========================================================= */
+const WEEK_PREF_KEY = 'sbs_week_pref';
+const WEEK_CONCURRENCY = 4;
+const weekCache = new Map(); // 'power|20261009' → rows
+const weekState = { start: '', days: 7, ch: 'power' };
+let weekToken = 0;
+
+function addDaysStr(dateStr, n) {
+  const p = dateStr.split('-').map((x) => parseInt(x, 10));
+  const d = new Date(p[0], p[1] - 1, p[2] + n);
+  return d.getFullYear() + '-' + pad2(d.getMonth() + 1) + '-' + pad2(d.getDate());
+}
+
+function fetchDayRows(ch, dateStr) {
+  const ymd = dateStr.replace(/-/g, '');
+  const key = ch + '|' + ymd;
+  if (weekCache.has(key)) return Promise.resolve(weekCache.get(key));
+  return sendMsg({ type: 'FETCH_SCHEDULE', channel: ch, date: ymd }).then((resp) => {
+    if (!resp || !resp.ok) throw new Error((resp && resp.error) || '응답 없음');
+    const rows = Array.isArray(resp.items) ? rowsFromItems(resp.items, ch) : parseScheduleText(resp.text, ch);
+    if (rows.length === 0) throw new Error('편성 정보 없음');
+    weekCache.set(key, rows);
+    return rows;
+  });
+}
+
+function weekDayHead(dateStr) {
+  const p = dateStr.split('-').map((x) => parseInt(x, 10));
+  const d = new Date(p[0], p[1] - 1, p[2]);
+  const days = ['일', '월', '화', '수', '목', '금', '토'];
+  const btn = document.createElement('button');
+  btn.type = 'button';
+  btn.className = 'wk-head' + (d.getDay() === 6 ? ' sat' : '') + (d.getDay() === 0 ? ' sun' : '');
+  btn.title = '이 날짜 편성표를 편집 화면에 열기';
+  const md = document.createElement('span');
+  md.className = 'md';
+  md.textContent = p[1] + '/' + p[2];
+  const dow = document.createElement('span');
+  dow.className = 'dow';
+  dow.textContent = '(' + days[d.getDay()] + ')';
+  btn.appendChild(md);
+  btn.appendChild(dow);
+  if (dateStr === todayStr()) {
+    const t = document.createElement('span');
+    t.className = 'today';
+    t.textContent = '오늘';
+    btn.appendChild(t);
+  }
+  if (dateStr === $('#dateInput').value) {
+    const t = document.createElement('span');
+    t.className = 'sel';
+    t.textContent = '편집 중';
+    btn.appendChild(t);
+  }
+  btn.addEventListener('click', () => openDayInEditor(dateStr));
+  return btn;
+}
+
+function weekRowEl(r) {
+  const live = r.type === '생방';
+  const row = document.createElement('div');
+  row.className = 'wk-row' + (live ? ' live' : ' rec');
+  const time = document.createElement('div');
+  time.className = 'wk-time';
+  time.textContent = r.time;
+  const main = document.createElement('div');
+  const title = document.createElement('div');
+  title.className = 'wk-title';
+  if (r.bora || live) {
+    const tags = document.createElement('span');
+    tags.className = 'wk-tags';
+    if (r.bora) {
+      const b = document.createElement('span');
+      b.className = 'wk-bora';
+      b.textContent = '보라';
+      tags.appendChild(b);
+    }
+    if (live) {
+      const l = document.createElement('span');
+      l.className = 'wk-live';
+      l.textContent = '생방송';
+      tags.appendChild(l);
+    }
+    title.appendChild(tags);
+  }
+  title.appendChild(document.createTextNode(r.title));
+  main.appendChild(title);
+  if (r.guest) {
+    const g = document.createElement('div');
+    g.className = 'wk-guest';
+    g.textContent = r.guest;
+    main.appendChild(g);
+  }
+  row.appendChild(time);
+  row.appendChild(main);
+  return row;
+}
+
+function fillWeekCol(col, rows) {
+  col.querySelectorAll('.wk-loading, .wk-row, .wk-empty, .wk-error').forEach((el) => el.remove());
+  if (!rows || rows.length === 0) {
+    const e = document.createElement('div');
+    e.className = 'wk-empty';
+    e.textContent = '편성 정보 없음';
+    col.appendChild(e);
+    return;
+  }
+  const frag = document.createDocumentFragment();
+  rows.forEach((r) => frag.appendChild(weekRowEl(r)));
+  col.appendChild(frag);
+}
+
+function syncWeekControls() {
+  $('#weekStart').value = weekState.start;
+  $('#weekDays').querySelectorAll('button').forEach((b) => b.classList.toggle('on', parseInt(b.dataset.days, 10) === weekState.days));
+  $('#weekCh').querySelectorAll('button').forEach((b) => b.classList.toggle('on', b.dataset.ch === weekState.ch));
+}
+
+async function renderWeek() {
+  syncWeekControls();
+  const token = ++weekToken;
+  const grid = $('#weekGrid');
+  grid.textContent = '';
+  grid.style.setProperty('--wk-n', String(weekState.days));
+  const ch = weekState.ch;
+  const dates = [];
+  for (let i = 0; i < weekState.days; i++) dates.push(addDaysStr(weekState.start, i));
+
+  const cols = dates.map((ds) => {
+    const col = document.createElement('div');
+    col.className = 'wk-col ' + ch;
+    col.appendChild(weekDayHead(ds));
+    const ld = document.createElement('div');
+    ld.className = 'wk-loading';
+    ld.textContent = '⏳ 불러오는 중…';
+    col.appendChild(ld);
+    grid.appendChild(col);
+    return col;
+  });
+
+  let done = 0;
+  let failed = 0;
+  const status = $('#weekStatus');
+  status.textContent = '⏳ ' + CHANNEL_LABEL[ch] + ' ' + dates.length + '일치 불러오는 중…';
+  let next = 0;
+  const worker = async () => {
+    while (next < dates.length) {
+      const i = next++;
+      try {
+        const rows = await fetchDayRows(ch, dates[i]);
+        if (token !== weekToken) return;
+        fillWeekCol(cols[i], rows);
+      } catch (err) {
+        if (token !== weekToken) return;
+        failed++;
+        cols[i].querySelectorAll('.wk-loading').forEach((el) => el.remove());
+        const e = document.createElement('div');
+        e.className = 'wk-error';
+        e.textContent = '불러오기 실패 — ' + err.message;
+        cols[i].appendChild(e);
+      }
+      done++;
+    }
+  };
+  await Promise.all(Array.from({ length: Math.min(WEEK_CONCURRENCY, dates.length) }, worker));
+  if (token !== weekToken) return;
+  status.textContent = failed ? '⚠️ ' + failed + '일 불러오기 실패 (아직 편성이 안 올라온 날일 수 있어요)' : '';
+}
+
+function saveWeekPref() {
+  const obj = {};
+  obj[WEEK_PREF_KEY] = { days: weekState.days, ch: weekState.ch };
+  storageSet(obj).catch(() => {});
+}
+
+function openWeekModal() {
+  weekState.start = $('#dateInput').value || todayStr();
+  $('#weekModal').hidden = false;
+  renderWeek();
+}
+
+function closeWeekModal() {
+  $('#weekModal').hidden = true;
+  weekToken++;
+}
+
+function isWeekModalOpen() {
+  return !$('#weekModal').hidden;
+}
+
+// 날짜 머리 클릭 → 그날 편성표를 편집 화면에 열기 (이미 받은 데이터 재사용)
+async function openDayInEditor(dateStr) {
+  const cur = $('#dateInput').value;
+  if (hasAnyRows() && dateStr !== cur && !confirm(dateStr + ' 편성표를 열면 지금 표의 내용이 지워집니다. 계속할까요?')) return;
+  if (hasAnyRows() && dateStr === cur) {
+    closeWeekModal();
+    return;
+  }
+  closeWeekModal();
+  setEditorDate(dateStr);
+  const ymd = dateStr.replace(/-/g, '');
+  const cached = CHANNELS.every((ch) => weekCache.has(ch + '|' + ymd));
+  if (cached) {
+    CHANNELS.forEach((ch) => renderChannel(ch, weekCache.get(ch + '|' + ymd)));
+    setStatus('');
+  } else {
+    CHANNELS.forEach((ch) => renderChannel(ch, []));
+    await crawlAll();
+  }
+}
+
+function initWeekView() {
+  $('#btnWeek').addEventListener('click', openWeekModal);
+  $('#weekClose').addEventListener('click', closeWeekModal);
+  $('#weekModal').addEventListener('click', (e) => {
+    if (e.target === $('#weekModal')) closeWeekModal();
+  });
+  $('#weekPrev').addEventListener('click', () => {
+    weekState.start = addDaysStr(weekState.start, -weekState.days);
+    renderWeek();
+  });
+  $('#weekNext').addEventListener('click', () => {
+    weekState.start = addDaysStr(weekState.start, weekState.days);
+    renderWeek();
+  });
+  $('#weekToday').addEventListener('click', () => {
+    weekState.start = todayStr();
+    renderWeek();
+  });
+  $('#weekStart').addEventListener('change', () => {
+    if (!$('#weekStart').value) return;
+    weekState.start = $('#weekStart').value;
+    renderWeek();
+  });
+  $('#weekDays').addEventListener('click', (e) => {
+    const b = e.target.closest('button[data-days]');
+    if (!b) return;
+    weekState.days = parseInt(b.dataset.days, 10);
+    saveWeekPref();
+    renderWeek();
+  });
+  $('#weekCh').addEventListener('click', (e) => {
+    const b = e.target.closest('button[data-ch]');
+    if (!b) return;
+    weekState.ch = b.dataset.ch;
+    saveWeekPref();
+    renderWeek();
+  });
+  storageGet(WEEK_PREF_KEY).then((p) => {
+    if (p && p.days >= 1 && p.days <= 7) weekState.days = p.days;
+    if (p && CHANNELS.indexOf(p.ch) !== -1) weekState.ch = p.ch;
+  }).catch(() => {});
+}
+
+let editorPrevDate = '';
+
+// 편집 화면의 날짜를 코드로 바꿀 때 (확인창 없이) — 여러 날 보기에서 사용
+function setEditorDate(dateStr) {
+  $('#dateInput').value = dateStr;
+  editorPrevDate = dateStr;
+  updateTitle();
+}
+
 /* ---------- 초기화 ---------- */
 async function init() {
   autoMaximizeWindow();
   await loadStaffList();
   initStaffModal();
+  initWeekView();
 
   const dateInput = $('#dateInput');
   dateInput.value = todayStr();
-  let prevDate = dateInput.value;
+  editorPrevDate = dateInput.value;
   updateTitle();
 
   // 날짜를 바꾸면 이전 날짜의 표를 비움 (내용이 있으면 확인)
   dateInput.addEventListener('change', () => {
     if (hasAnyRows() && !confirm('날짜를 바꾸면 지금 표의 내용이 지워집니다. 계속할까요?')) {
-      dateInput.value = prevDate;
+      dateInput.value = editorPrevDate;
       return;
     }
-    prevDate = dateInput.value;
+    editorPrevDate = dateInput.value;
     updateTitle();
     CHANNELS.forEach((ch) => renderChannel(ch, []));
     setStatus('');
@@ -2707,6 +3226,8 @@ async function init() {
     }
     if (e.key === 'Escape' && isStaffModalOpen()) {
       closeStaffModal(false);
+    } else if (e.key === 'Escape' && isWeekModalOpen()) {
+      closeWeekModal();
     }
   });
 
