@@ -942,28 +942,30 @@
     body.printing.print-mono .time-input { color: #000000; }
     body.printing.print-mono .prog-title { color: #000000; }
     body.printing.print-mono .prog-staff { color: #444444; }
+    /* 보라: 굵은 이중 테두리 */
     body.printing.print-mono .bora-badge {
       background: #ffffff !important;
       color: #000000 !important;
-      border: 0.7pt solid #000000 !important;
-      font-weight: 800;
+      border: 1.8pt double #000000 !important;
+      font-weight: 900;
     }
     /* 생방송: 테두리 상자 + 굵은 검정 글씨, 출연자보다 작게 (출연자가 주인공) */
+    /* 생방송: 왼쪽 끝에 사선 빗금 띠 + 흰 바탕 글씨 (흑백에서도 또렷) */
     body.printing.print-mono .type-print.live {
-      background: #ffffff;
+      background: repeating-linear-gradient(135deg, #111111 0 1.2px, #ffffff 1.2px 3.4px) left top / 2.4mm 100% no-repeat, #ffffff;
       color: #000000;
-      border: 0.8pt solid #000000;
+      border: 1pt solid #000000;
       border-radius: 2px;
       font-size: calc(9pt * var(--pscale, 1));
-      font-weight: 800;
+      font-weight: 900;
       letter-spacing: 0;
-      padding: 0.5mm 1.6mm;
+      padding: 0.5mm 1.6mm 0.5mm 3.2mm;
     }
     body.printing.print-mono .guest-print-text { color: #000000; }
     body.printing.print-mono tr.is-rec .guest-print-text { color: #6e6e6e; }
     body.printing.print-mono .print-footer { color: #000000; }
-    body.printing.print-mono .print-footer .lg.bora { background: #ffffff; color: #000000; border: 0.6pt solid #000000; }
-    body.printing.print-mono .print-footer .lg.live { background: #ffffff; color: #000000; border: 0.6pt solid #000000; }
+    body.printing.print-mono .print-footer .lg.bora { background: #ffffff; color: #000000; border: 1.5pt double #000000; }
+    body.printing.print-mono .print-footer .lg.live { background: repeating-linear-gradient(135deg, #111111 0 1px, #ffffff 1px 3px) left top / 1.8mm 100% no-repeat, #ffffff; color: #000000; border: 0.8pt solid #000000; padding-left: 2.5mm; }
 
     /* =========================================================
      * 휴대폰·태블릿 화면 (웹 버전)
@@ -1051,7 +1053,7 @@
       <button type="button" class="btn btn-staff" id="btnStaff">👥 스태프 수동으로 관리</button>
       <button type="button" class="btn btn-staff-sync" id="btnStaffSync" title="화면의 프로그램별 CP·PD·작가를 SBS 데이터에서 읽어 명단을 자동으로 갱신">🔁 스태프 자동갱신</button>
       <button type="button" class="btn btn-print" id="btnPrintColor" title="컬러 프린터용 (생방송 = 노랑)">🖨️ 컬러 인쇄</button>
-      <button type="button" class="btn btn-print-mono" id="btnPrintMono" title="흑백 프린터 전용 깔끔한 디자인 (생방송 = 테두리 상자)">🖨️ 흑백 인쇄</button>
+      <button type="button" class="btn btn-print-mono" id="btnPrintMono" title="흑백 프린터 전용 깔끔한 디자인 (생방송 = 빗금 띠, 보라 = 이중 테두리)">🖨️ 흑백 인쇄</button>
       <span class="status" id="status"></span>
     </div>
 
